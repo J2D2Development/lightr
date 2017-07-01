@@ -6,6 +6,9 @@ const http = require('http');
 const path = require('path');
 const url = require('url');
 
+//local imports
+const mimeTypes = require('./utilities/mimetypes');
+
 //constants
 const port = process.argv[2] || 8001;
 const host = 'localhost';
@@ -16,22 +19,23 @@ const server = http.createServer();
 
 server.on('request', (req, res) => {
     const parsedUrl = url.parse(req.url);
-    //TODO: get extension of url being requested
-    // if none: try turning to html for fs.exists
-    // if one of static file, use static (ico, jpg, etc)
-    // if json, use mock api
-
-    //TODO: if first(?) position of url is 'api', we are going to api (set up new module for dealing with that)
-    
+    const extName = path.extname(req.url);
     let pathName = path.join(clientDir, parsedUrl.pathname);
 
     if(parsedUrl.pathname === '/') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         fs.createReadStream(`${pathName}/index.html`).pipe(res);
     } else {
+        if(!extName) { 
+            //if no extension, try html
+            //may need to update this to omit 'api' routes- they won't have an extension and will be .json
+            pathName += '.html'; 
+        }
+
         fs.exists(pathName, exists => {
             if(exists) {
-                res.writeHead(200, { 'Content-Type': 'text/html' });
+                const ext = path.parse(pathName).ext;
+                res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'text/plain' });
                 fs.createReadStream(pathName).pipe(res);
             } else {
                 res.writeHead(404, { 'Content-Type': 'text/html' });
@@ -39,12 +43,6 @@ server.on('request', (req, res) => {
             }
         });
     }
-
-    
-    // res.writeHead(200, { 'Content-Type': 'text/html' });
-    // fs.createReadStream(path.resolve('index.html')).pipe(res);
-
-    //res.end(`You hit the url: ${parsedUrl}`);
 });
 
 server.on('error', err => {
