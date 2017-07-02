@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "babel": {
-    "presets": [
-      "es2015",
-      "babel-preset-react"
-    ]
-  },
   "scripts": {
     "start": "node ./server/index 4001",
     "test": "echo \"Error: no test specified\" && exit 1"

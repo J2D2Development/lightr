@@ -6,42 +6,45 @@ const http = require('http');
 const path = require('path');
 const url = require('url');
 
-//local imports
-const mimeTypes = require('./utilities/mimetypes');
-
 //constants
 const port = process.argv[2] || 8001;
 const host = 'localhost';
-const clientDir = path.join(__dirname, '../client');
+const clientDir = path.join(__dirname, '../client/lightr-client/public');
 
 //create server
 const server = http.createServer();
 
 server.on('request', (req, res) => {
     const parsedUrl = url.parse(req.url);
-    const extName = path.extname(req.url);
-    let pathName = path.join(clientDir, parsedUrl.pathname);
+    //const extName = path.extname(req.url);
 
-    if(parsedUrl.pathname === '/') {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        fs.createReadStream(`${pathName}/index.html`).pipe(res);
-    } else {
-        if(!extName) { 
-            //if no extension, try html
-            //may need to update this to omit 'api' routes- they won't have an extension and will be .json
-            pathName += '.html'; 
-        }
-
-        fs.exists(pathName, exists => {
+    if(parsedUrl.pathname.includes('api')) {
+        const fullPath = path.join(__dirname, `../${parsedUrl.pathname}.json`);
+        //return api data or mock
+        fs.exists(fullPath, exists => {
             if(exists) {
-                const ext = path.parse(pathName).ext;
-                res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'text/plain' });
-                fs.createReadStream(pathName).pipe(res);
+                res.writeHead(200, {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Content-Type': 'application/json' 
+                });
+                fs.readFile(fullPath, 'utf-8', (err, data) => {
+                    if(err) {
+                        console.log('error reading json:', err);
+                        return;
+                    }
+                    const returnData = JSON.stringify(JSON.parse(data));
+                    res.end(returnData);
+                });
             } else {
                 res.writeHead(404, { 'Content-Type': 'text/html' });
-                res.end('<h1>File not found</h1>');
+                res.end('<h1>API Endpoint Not Found</h1>');
             }
-        });
+        })
+    } else {
+        //return us the root route for our react spa
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        fs.createReadStream(`${clientDir}/index.html`).pipe(res);
     }
 });
 
