@@ -30,11 +30,13 @@ server.on('request', (req, res) => {
                 });
                 fs.readFile(fullPath, 'utf-8', (err, data) => {
                     if(err) {
-                        console.log('error reading json:', err);
-                        return;
+                        const response = {
+                            "result": false,
+                            "msg": "Error Reading Json"
+                        };
+                        return res.end(response);
                     }
-                    const returnData = JSON.stringify(JSON.parse(data));
-                    res.end(returnData);
+                    res.end(data);
                 });
             } else {
                 res.writeHead(404, { 'Content-Type': 'text/html' });
