@@ -20,11 +20,11 @@ class App extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentWillMount = () => {
 		this.getLightData('http://localhost:4001/api/lights');
 	}
 
-	getLightData(lightsUrl) {
+	getLightData = (lightsUrl) => {
 		fetch(lightsUrl, {
 			method: 'GET',
 			headers: new Headers({
@@ -34,11 +34,18 @@ class App extends Component {
 		.then(response => {
 			return response.json();
 		}).then(jsonData => {
-			this.setState({lightData: Object.assign(this.state.lightData, jsonData)});
+			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) });
 		}).catch(err => {
 			console.log('error:', err);
 			//notifyr show error
 		});
+	}
+
+	updateLight = (evt) => {
+		const objId = +evt.target.id.match(/\d+/g).join('');
+		const lightData = Object.assign({}, this.state.lightData);
+		lightData[objId].state.on = evt.target.checked;
+		this.setState({ lightData });
 	}
 
   render() {
@@ -50,7 +57,7 @@ class App extends Component {
         </div>
         <small>Note- you must be on the right network to access.  If you're not on J2D2, you're out of luck</small>
         <div className="panel-wrapper">
-          <LightSwitchPanel lightData={this.state.lightData} />
+          <LightSwitchPanel lightData={this.state.lightData} updateLightHandler={this.updateLight} />
         </div>
       </div>
     );
