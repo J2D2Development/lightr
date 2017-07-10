@@ -44,7 +44,8 @@ class App extends Component {
 	updateLight = (evt) => {
 		const objId = +evt.target.id.match(/\d+/g).join('');
 		const lightData = Object.assign({}, this.state.lightData);
-		lightData[objId].state.on = evt.target.checked;
+		console.log(evt.target.value);
+		lightData[objId].state.on = evt.target.value === 'on' ? true : false;
 		this.setState({ lightData });
 	}
 

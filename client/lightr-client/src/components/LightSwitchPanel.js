@@ -17,11 +17,11 @@ export const LightSwitchPanel = (props) => {
         display = lights.map((light, index) => {
             const key = `light-${index + 1}`;
             return (
-                <li key={key}>
-                    {light.name}: {light.type}<br />
+                <fieldset key={key}>
+                    <legend>{light.name}: {light.type}</legend>
                     Status: {light.state.on ? 'On' : 'Off'}<br />
                     <LightSwitch id={key} switchedOn={light.state.on} updateLightHandler={updateLightHandler} />
-                </li>
+                </fieldset>
             );
         });
     }
