@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+
 import { LightSwitchPanel } from './components/LightSwitchPanel';
-import logo from './img/j2d2-logo-md.png';
 import './App.css';
 
 /*
@@ -11,6 +12,12 @@ import './App.css';
         -using mock working
             -next: pass into state and set up light switches appropriately
 */
+
+const Test = () => {
+	return(
+		<h1>Test route!</h1>
+	)
+}
 
 class App extends Component {
 	constructor() {
@@ -49,20 +56,41 @@ class App extends Component {
 		this.setState({ lightData });
 	}
 
-  render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Bluebell Lights</h2>
-        </div>
-        <small>Note- you must be on the right network to access.  If you're not on J2D2, you're out of luck</small>
-        <div className="panel-wrapper">
-          <LightSwitchPanel lightData={this.state.lightData} updateLightHandler={this.updateLight} />
-        </div>
-      </div>
-    );
-  }
+	render() {
+		return(
+			<div className="App">
+				<div className="App-header">
+					<h2>Bluebell Dashboard</h2>
+				</div>
+				<small>Note- you must be on the right network to access.  If you're not on J2D2, you're out of luck</small>
+				<Link to="/">Home</Link>
+				<Link to="/lights">Manage Lights</Link>
+				<Link to="/test">Test Route</Link>
+
+				<Route path="/lights" 
+					render={()=><LightSwitchPanel lightData={this.state.lightData} 
+					updateLightHandler={this.updateLight} />}
+				/>
+				<Route path="/test" component={Test}/>
+			</div>
+		)
+	}
 }
 
+// const routeWrapper = () => {
+//     return (
+// 			<Router>
+// 				<div>
+// 					<Link to="/">Home</Link>
+// 					<Link to="/lights">Lights</Link>
+// 				</div>
+// 				<Route exact path="/" component={Home}/>
+//       	<Route path="/lights" component={LightSwitchPanel}
+// 				render={()=><TestWidget num="2" someProp={100}/>}/>
+// 			</Router>
+//     );
+//   }
+// }
+
+// export default routeWrapper;
 export default App;
