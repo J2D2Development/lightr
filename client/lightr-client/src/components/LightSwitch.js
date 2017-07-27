@@ -1,17 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Toggle from 'material-ui/Toggle';
 
 export const LightSwitch = (props) => {
     return(
         <div>
-            <label htmlFor={props.id+'on'}>
-                <input type="radio" name={props.id} id={props.id+'on'} value="on" checked={props.switchedOn} onChange={props.updateLightHandler} />
-                <span>On</span>
-            </label>
-            <label htmlFor={props.id+'off'}>
-                <input type="radio" name={props.id} id={props.id+'off'} value="off" checked={!props.switchedOn} onChange={props.updateLightHandler} />
-                <span>Off</span>
-            </label>
+            <Toggle label="simple" 
+                name={props.id} 
+                id={props.id}
+                toggled={props.switchedOn} 
+                onToggle={props.updateLightHandler} 
+            />
         </div>
     );
 }

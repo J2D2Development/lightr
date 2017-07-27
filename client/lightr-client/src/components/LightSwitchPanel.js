@@ -28,7 +28,7 @@ export const LightSwitchPanel = (props) => {
 
     return(
         <div>
-            I will be a light switch panel.  I will have multiple switch groups!
+            <h3>Manage Lights</h3>
             <ul>{display}</ul>
         </div>
     );

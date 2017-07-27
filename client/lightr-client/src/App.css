@@ -40,7 +40,7 @@
   to { transform: rotate(360deg); }
 }
 
-[type="radio"] {
+/* [type="radio"] {
   border: 0; 
   clip: rect(0 0 0 0); 
   height: 1px; margin: -1px; 
@@ -51,7 +51,7 @@
 }
 
 [type="radio"] + span {
-  /*display: block;*/
+  display: block;
 }
 
 [type="radio"] + span::before {
@@ -68,17 +68,17 @@
   transition: 0.25s ease all;
 }
 
-/* the checked style using the :checked pseudo class */
+/* the checked style using the :checked pseudo class
 [type="radio"]:checked + span::before {
   background: green;
   box-shadow: 0 0 0 0.25em #000;
 }
 
-/* never forget focus styling */
+/* never forget focus styling
 [type="radio"]:focus + span::after {
   outline: 1px dotted blue;
-  /*content: '\0020\2190';
+  content: '\0020\2190';
   font-size: 1.5em;
   line-height: 1;
-  vertical-align: -0.125em;*/
-}
+  vertical-align: -0.125em;
+} */
