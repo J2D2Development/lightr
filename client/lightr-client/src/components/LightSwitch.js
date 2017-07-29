@@ -5,7 +5,7 @@ import Toggle from 'material-ui/Toggle';
 export const LightSwitch = (props) => {
     return(
         <div>
-            <Toggle label="simple" 
+            <Toggle label={props.switchedOn ? 'On' : 'Off'} 
                 name={props.id} 
                 id={props.id}
                 toggled={props.switchedOn} 

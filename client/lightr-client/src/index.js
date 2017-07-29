@@ -10,9 +10,5 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 // http://stackoverflow.com/a/34015469/988941 
 injectTapEventPlugin();
 
-ReactDOM.render((
-    <BrowserRouter>
-    <App />
-    </BrowserRouter>
-), document.getElementById('root'));
+ReactDOM.render((<BrowserRouter><App /></BrowserRouter>), document.getElementById('root'));
 registerServiceWorker();

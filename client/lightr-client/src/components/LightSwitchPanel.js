@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import {Card, CardActions, CardHeader, CardTitle, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+
 import { LightSwitch } from './LightSwitch';
 
 export const LightSwitchPanel = (props) => {
@@ -17,19 +21,30 @@ export const LightSwitchPanel = (props) => {
         display = lights.map((light, index) => {
             const key = `light-${index + 1}`;
             return (
-                <fieldset key={key}>
-                    <legend>{light.name}: {light.type}</legend>
-                    Status: {light.state.on ? 'On' : 'Off'}<br />
-                    <LightSwitch id={key} switchedOn={light.state.on} updateLightHandler={updateLightHandler} />
-                </fieldset>
+                <Card key={key}>
+                    <CardHeader title={light.name} subtitle={light.type} />
+                    <CardTitle title={
+                        <LightSwitch 
+                            id={key} switchedOn={light.state.on} 
+                            updateLightHandler={updateLightHandler}
+                        />}
+                    />
+                    <CardActions>
+                        <FlatButton label="Manage" primary={true} />
+                    </CardActions>
+                </Card>
             );
         });
     }
 
+    const styles = { display: 'flex', justifyContent: 'space-around' };
+
     return(
         <div>
             <h3>Manage Lights</h3>
-            <ul>{display}</ul>
+            <div style={styles}>
+                {display}
+            </div>
         </div>
     );
 }

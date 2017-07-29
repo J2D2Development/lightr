@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+
+import AppBar from 'material-ui/AppBar';
+import Drawer from 'material-ui/Drawer';
+import RaisedButton from 'material-ui/RaisedButton';
+
+import { DashboardMain } from './DashboardMain';
 import { LightSwitchPanel } from './LightSwitchPanel';
 
 class Dashboard extends Component {
     constructor() {
 		super();
 		this.state = {
-			lightData: {}
+			lightData: {},
+			sidebar: { open: false }
 		};
 	}
 
@@ -37,17 +44,44 @@ class Dashboard extends Component {
         lightData[objId].state.on = !lightData[objId].state.on;
 		this.setState({ lightData });
     }
+
+	toggleSidebar = (val) => {
+		const sidebar = Object.assign({}, this.state.sidebar);
+		sidebar.open = !sidebar.open;
+		this.setState({ sidebar });
+	}
     
     render() {
         return(
             <div>
-                <h1>My Dashboard</h1>
-                <LightSwitchPanel 
-                    lightData={this.state.lightData} 
-					updateLightHandler={this.updateLight} 
-                />
+				<AppBar 
+					title="Bluebell Dashboard"
+					iconClassNameRight="muidocs-icon-navigation-expand-more"
+					onLeftIconButtonTouchTap={this.toggleSidebar}
+				/>
+				<Drawer 
+					docked={false}
+					open={this.state.sidebar.open}
+					onRequestChange={this.toggleSidebar}
+				>
+					<h2>My Menu</h2>
+					<RaisedButton label="Dashboard Home" primary={true} fullWidth={true} 
+						containerElement={<Link to="/dashboard" />}
+						onTouchTap={this.toggleSidebar}
+					/>
+					<RaisedButton label="Manage Lights" primary={true} fullWidth={true} 
+						containerElement={<Link to="/dashboard/lights" />}
+						onTouchTap={this.toggleSidebar}
+					/>
+				</Drawer>
+
+                <Route exact path="/dashboard" component={DashboardMain} />
+				<Route path="/dashboard/lights" 
+					render={()=><LightSwitchPanel lightData={this.state.lightData} 
+						updateLightHandler={this.updateLight} />}
+				/>
             </div>
-        )
+        );
     }
 }
 
