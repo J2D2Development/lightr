@@ -7,10 +7,12 @@ import Dashboard from './components/Dashboard';
 import './App.css';
 
 class App extends Component {
+	mainAppStyles = { minHeight: '100%', height: '100%' };
+
 	render() {
 		return(
 			<MuiThemeProvider>
-				<div>
+				<div style={this.mainAppStyles}>
 					<Route exact path="/" component={Welcome} />
 					<Route path="/dashboard" component={Dashboard} />
 				</div>

@@ -3,7 +3,9 @@ import { Route, Link, Switch } from 'react-router-dom';
 
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
+import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import FontIcon from 'material-ui/FontIcon';
 
 import { DashboardMain } from './DashboardMain';
 import { LightSwitchPanels } from './LightSwitchPanels';
@@ -45,6 +47,21 @@ class Dashboard extends Component {
 		});
 	}
 
+	convertLightsToArray(lightData) {
+		let lights = [];
+
+		for(const item in lightData) {
+			if(lightData.hasOwnProperty(item)) {
+				lights.push(lightData[item]);
+			}
+		}
+
+		return [...lights].map((light, index) => {
+			light.key = `light-${index + 1}`;
+			return light;
+		});
+	}
+
 	updateLight = (evt) => {
 		const objId = +evt.target.id.match(/\d+/g).join('');
 		const lightData = Object.assign({}, this.state.lightData);
@@ -59,18 +76,25 @@ class Dashboard extends Component {
 	}
 
 	styles = {
+		mainDashStyle: { backgroundColor: '#333333', color: '#fff', minHeight: '100%' },
+		appBarStyle: { color: '#fff' },
+		viewportStyle: { padding: '0.5em' },
 		sidebarh1: { padding: '0.5em' },
 		sidebarButton: { marginBottom: '0.5em' }
 	};
 
     
     render() {
+		const convertedLightData = this.convertLightsToArray(this.state.lightData);
+
         return(
-            <div>
-				<AppBar 
+            <div style={this.styles.mainDashStyle}>
+				<AppBar
 					title="Bluebell Dashboard"
-					iconClassNameRight="muidocs-icon-navigation-expand-more"
 					onLeftIconButtonTouchTap={this.toggleSidebar}
+					iconElementRight={<FlatButton label={
+						<FontIcon style={this.styles.appBarStyle} className="fa fa-user"/>
+					} />}
 				/>
 				<Drawer 
 					docked={false}
@@ -90,20 +114,25 @@ class Dashboard extends Component {
 					/>
 				</Drawer>
 
-				<Switch>
-					<Route exact path="/dashboard" component={DashboardMain} />
-					<Route exact path="/dashboard/lights" 
-						render={()=><LightSwitchPanels lightData={this.state.lightData} 
-							updateLightHandler={this.updateLight} />}
-					/>
-					<Route path="/dashboard/lights/:lightId" 
-						render={(routeParams)=><LightSwitchIndividualView match={routeParams}
-							lightData={this.state.lightData}
-							updateLightHandler={this.updateLight} />
-						} 
-					/>
-					<Route component={FourOhFour} />
-				</Switch>				
+				<div style={this.styles.viewportStyle}>
+					<Switch>
+						<Route exact path="/dashboard" 
+							render={()=><DashboardMain lightData={convertedLightData}/>} 
+						/>
+						<Route exact path="/dashboard/lights" 
+							render={()=><LightSwitchPanels 
+								lightData={convertedLightData} 
+								updateLightHandler={this.updateLight} />}
+						/>
+						<Route path="/dashboard/lights/:lightId" 
+							render={(routeParams)=><LightSwitchIndividualView match={routeParams}
+								lightData={convertedLightData}
+								updateLightHandler={this.updateLight} />
+							} 
+						/>
+						<Route component={FourOhFour} />
+					</Switch>
+				</div>			
             </div>
         );
     }

@@ -6,20 +6,14 @@ import { LightSwitchPanel } from './LightSwitchPanel';
 export const LightSwitchPanels = (props) => {
     let lightData = props.lightData;
     let updateLightHandler = props.updateLightHandler;
-    let lights = [], display = [];
-    
-    if(lightData) {
-        for(const item in lightData) {
-            if(lightData.hasOwnProperty(item)) {
-                lights.push(lightData[item]);
-            }
-        }
+    let display = [];
 
-        display = lights.map((light, index) => {
-            const key = `light-${index + 1}`;
+    if(lightData) {
+        display = lightData.map((light, index) => {
+            //const key = `light-${index + 1}`;
             return (
                 <LightSwitchPanel
-                    key={key} id={key}
+                    key={light.key} id={light.key}
                     title={light.name} subtitle={light.type}
                     switchedOn={light.state.on}
                     updateLightHandler={updateLightHandler}
@@ -39,6 +33,6 @@ export const LightSwitchPanels = (props) => {
 }
 
 LightSwitchPanels.propTypes = {
-    lightData: PropTypes.object.isRequired,
+    lightData: PropTypes.array.isRequired,
     updateLightHandler: PropTypes.func.isRequired
 }

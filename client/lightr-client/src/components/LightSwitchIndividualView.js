@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Card, CardActions, CardHeader, CardTitle } from 'material-ui/Card';
+import { Card, CardHeader, CardTitle } from 'material-ui/Card';
 
 import { LightSwitch } from './LightSwitch';
 
