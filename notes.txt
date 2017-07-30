@@ -1,0 +1,51 @@
+LIGHTR PROJECT: 
+    https://www.developers.meethue.com/documentation
+    http://www.material-ui.com/#/
+
+    prevent screen sleep:
+        https://davidwalsh.name/wake-lock-shim
+
+    next:
+        -main dashboard grid (for now: lights: status of each, link to manage, lists: 'coming soon')
+        -lightpanel grid (almost there, make title look nicer)
+        -link up 'manage' button for each to :id view (should be just that light's info as a switch- this will be the view our iphone4 uses for the closet light)
+            -where should I have the 'edit title', 'edit groups' logic?
+            TODO NEXT-single view works,but many errors and might not be properly updating state.  check it out!
+
+    make sure updates are pushed live (if update from app, we want the webapp to update live, as the old iphone4 will serve as the on-site switch for the closet)
+
+    test app: react native
+
+for tplink smart plug:
+    http://itnerd.space/2017/06/19/how-to-authenticate-to-tp-link-cloud-api/
+    https://github.com/plasticrake/hs100-api
+    http://itnerd.space/2017/05/21/how-to-get-the-tp-link-hs100-cloud-end-point-url/
+
+    api?: https://wap.tplinkcloud.com
+
+
+
+
+LEARNING PROJECTS
+https://www.interviewcake.com/question/javascript/product-of-other-numbers
+
+http://www.codewars.com/kata/langtons-ant?utm_source=newsletter
+http://www.codewars.com/kata/geometry-basics-triangle-area-in-2d/train/javascript
+http://www.codewars.com/kata/longest-common-subsequence?utm_source=newsletter
+https://martinfowler.com/articles/refactoring-video-store-js/
+
+
+WORK ON THIS
+https://performancejs.com/post/hde6d32/The-Best-List-of-Frontend-JavaScript-Interview-Questions-(written-by-a-Frontend-Engineer)
+
+D3
+-update enter-exit pattern (very useful)
+    https://bl.ocks.org/cmgiven/32d4c53f19aea6e528faf10bfe4f3da9
+
+DATA STRUCTURES
+quicksort, binary sort
+stacks, linked list, queues, default array methods
+
+https://www.codementor.io/thinker3197/avoid-common-pitfalls-in-javascript-u0hzz2nfw
+
+https://www.codementor.io/nihantanu/21-essential-javascript-tech-interview-practice-questions-answers-du107p62z?utm_source=youtube&utm_medium=social&utm_campaign=outreach&utm_term=post-du107p62z&utm_content=OH119-comment

@@ -9,7 +9,7 @@ export const DashboardMain = (props) => {
                 <Link to="/dashboard/lights">Go</Link>
             </div>
             <div className="dash-grid__element">
-
+                Manage Lists (coming soon)
             </div>
             <div className="dash-grid__element"></div>
             <div className="dash-grid__element"></div>

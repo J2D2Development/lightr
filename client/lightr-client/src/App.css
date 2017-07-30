@@ -12,6 +12,15 @@
     background-size: contain; 
 }
 
+h1, h2, h3, h4, h5 {
+  font-weight: normal;
+}
+
+.sidebar-button {
+  border-radius: 0;
+  margin-bottom: 0.5em;
+}
+
 #root {
   height: 100%;
   min-height: 100%;
@@ -38,6 +47,20 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.light-switch__panels {
+  display: flex;
+  justify-content: space-around;
+}
+@media (max-width: 500px) {
+  .light-switch__panels {
+    display: block;
+    min-width: 100%;
+  }
+  .light-switch__panel {
+    margin-bottom: 1em;
+  }
 }
 
 /* [type="radio"] {

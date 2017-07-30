@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, Switch } from 'react-router-dom';
 
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import { DashboardMain } from './DashboardMain';
-import { LightSwitchPanel } from './LightSwitchPanel';
+import { LightSwitchPanels } from './LightSwitchPanels';
+import { LightSwitchIndividualView } from './LightSwitchIndividualView';
+
+const FourOhFour = () => {
+	return(
+		<h1>Not Found!</h1>
+	);
+};
 
 class Dashboard extends Component {
     constructor() {
@@ -50,6 +57,12 @@ class Dashboard extends Component {
 		sidebar.open = !sidebar.open;
 		this.setState({ sidebar });
 	}
+
+	styles = {
+		sidebarh1: { padding: '0.5em' },
+		sidebarButton: { marginBottom: '0.5em' }
+	};
+
     
     render() {
         return(
@@ -64,22 +77,33 @@ class Dashboard extends Component {
 					open={this.state.sidebar.open}
 					onRequestChange={this.toggleSidebar}
 				>
-					<h2>My Menu</h2>
+					<h2 style={this.styles.sidebarh1}>Menu</h2>
 					<RaisedButton label="Dashboard Home" primary={true} fullWidth={true} 
+						style={this.styles.sidebarButton}
 						containerElement={<Link to="/dashboard" />}
 						onTouchTap={this.toggleSidebar}
 					/>
 					<RaisedButton label="Manage Lights" primary={true} fullWidth={true} 
+						style={this.styles.sidebarButton}
 						containerElement={<Link to="/dashboard/lights" />}
 						onTouchTap={this.toggleSidebar}
 					/>
 				</Drawer>
 
-                <Route exact path="/dashboard" component={DashboardMain} />
-				<Route path="/dashboard/lights" 
-					render={()=><LightSwitchPanel lightData={this.state.lightData} 
-						updateLightHandler={this.updateLight} />}
-				/>
+				<Switch>
+					<Route exact path="/dashboard" component={DashboardMain} />
+					<Route exact path="/dashboard/lights" 
+						render={()=><LightSwitchPanels lightData={this.state.lightData} 
+							updateLightHandler={this.updateLight} />}
+					/>
+					<Route path="/dashboard/lights/:lightId" 
+						render={(routeParams)=><LightSwitchIndividualView match={routeParams}
+							lightData={this.state.lightData}
+							updateLightHandler={this.updateLight} />
+						} 
+					/>
+					<Route component={FourOhFour} />
+				</Switch>				
             </div>
         );
     }
