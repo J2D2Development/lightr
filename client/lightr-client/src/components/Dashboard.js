@@ -4,8 +4,9 @@ import { Route, Link, Switch } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
+import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import { DashboardMain } from './DashboardMain';
 import { LightSwitchPanels } from './LightSwitchPanels';
@@ -20,38 +21,99 @@ const FourOhFour = () => {
 class Dashboard extends Component {
     constructor() {
 		super();
+		this.lightsUrl = 'http://localhost:4001/api/lights';
 		this.state = {
 			lightData: {},
-			sidebar: { open: false }
+			sidebar: { open: false },
+			snackbar: { open: false }
 		};
 	}
 
 	componentWillMount = () => {
-		this.getLightData('http://localhost:4001/api/lights');
+		this.getLightData(this.lightsUrl);
 	}
 
-	getLightData = (lightsUrl) => {
-		fetch(lightsUrl, {
+	getLightData = (urlBase) => {
+		fetch(urlBase, {
 			method: 'GET',
 			headers: new Headers({
 				'Content-Type': 'application/json'
 			})
 		})
 		.then(response => {
-			return response.json();
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error('Network error getting light data');
 		}).then(jsonData => {
-			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) });
+			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) }, () => {
+				this.snackbarOpen();
+			});
 		}).catch(err => {
-			console.log('error:', err);
-			//notifyr show error
+			console.log('error:', err.message);
+			//TODO: snackbar show error
 		});
 	}
+
+	//TODO: test this when hub is set up, won't work with fake api
+	findNewLights = (urlBase) => {
+		fetch(urlBase, {
+			method: 'POST',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error('Network Error searching for new lights');
+		})
+		.then(jsonData => {
+			console.log('new lights?', jsonData);
+			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) });
+		})
+		.catch(err => {
+			console.log('error with fetch:', err.message);
+			//TODO: snackbar show error
+		});
+	}
+
+	//TODO: test this when hub is set up, won't work with fake api
+	setLightName = (urlBase, lightId) => {
+		fetch(`${urlBase}/${lightId}`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error renaming light with id ${lightId}`);
+		})
+		.then(jsonData => {
+			console.log('light name updated', jsonData);
+			//method only returns new name, so we have to get light data again for update
+			this.getLightData(this.urlBase);
+		})
+		.catch(err => {
+			console.log('error with fetch:', err.message);
+			//TODO: snackbar show error
+		});
+	}
+
+	//TODO: finish and test this when hub is set up, won't work with fake api
+	//setLightState = (urlBase, lightId)
 
 	convertLightsToArray(lightData) {
 		let lights = [];
 
 		for(const item in lightData) {
 			if(lightData.hasOwnProperty(item)) {
+				//need ref to the original object's prop (id number) for updating later
+				lightData[item]['lightId'] = item;
 				lights.push(lightData[item]);
 			}
 		}
@@ -73,6 +135,18 @@ class Dashboard extends Component {
 		const sidebar = Object.assign({}, this.state.sidebar);
 		sidebar.open = !sidebar.open;
 		this.setState({ sidebar });
+	}
+
+	snackbarClose = () => {
+		const snackbar = Object.assign({}, this.state.snackbar);
+		snackbar.open = false;
+		this.setState({ snackbar });
+	}
+
+	snackbarOpen = () => {
+		const snackbar = Object.assign({}, this.state.snackbar);
+		snackbar.open = true;
+		this.setState({ snackbar });
 	}
 
 	styles = {
@@ -113,6 +187,13 @@ class Dashboard extends Component {
 						onTouchTap={this.toggleSidebar}
 					/>
 				</Drawer>
+
+				<Snackbar 
+					open={this.state.snackbar.open}
+					message="Snackbar test - replace me"
+					autoHideDuration={4000}
+					onRequestClose={this.snackbarClose}
+				/>
 
 				<div style={this.styles.viewportStyle}>
 					<Switch>

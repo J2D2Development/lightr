@@ -49,17 +49,29 @@ h1, h2, h3, h4, h5 {
   to { transform: rotate(360deg); }
 }
 
-.light-switch__panels {
+
+.panel-main__wrapper {
   display: flex;
   justify-content: space-around;
 }
+.panels-small {
+  justify-content: flex-start;
+}
+.panel-small {
+  margin-right: 1em;
+}
+.panel-half__lg {
+  width: 48%;
+  justify-content: space-around;
+}
 @media (max-width: 500px) {
-  .light-switch__panels {
+  .panel-main__wrapper, .panel-half__lg {
     display: block;
     min-width: 100%;
   }
-  .light-switch__panel {
+  .panel-main__panel, .panel-small {
     margin-bottom: 1em;
+    margin-right: 0;
   }
 }
 

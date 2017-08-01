@@ -9,14 +9,9 @@ export const DashboardMain = (props) => {
     const lights = props.lightData;
     const lists = [];
 
-    const styles = {
-        wrapper: { display: 'flex', justifyContent: 'space-around' },
-        card: { width: '48%' }
-    };
-
     return(
-        <div style={styles.wrapper}>
-            <Card style={styles.card}>
+        <div className="panel-main__wrapper">
+            <Card className="panel-main__panel panel-half__lg">
                 <CardHeader title="Manage Lights"
                     avatar={<FontIcon className="fa fa-lightbulb-o"/>}
                 />
@@ -30,7 +25,7 @@ export const DashboardMain = (props) => {
                     />
                 </CardActions>
             </Card>
-            <Card style={styles.card}>
+            <Card className="panel-main__panel panel-half__lg">
                 <CardHeader title="Manage Lists"
                     avatar={<FontIcon className="fa fa-list"/>} 
                 />

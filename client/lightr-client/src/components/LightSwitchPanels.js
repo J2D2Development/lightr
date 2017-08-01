@@ -10,10 +10,10 @@ export const LightSwitchPanels = (props) => {
 
     if(lightData) {
         display = lightData.map((light, index) => {
-            //const key = `light-${index + 1}`;
             return (
                 <LightSwitchPanel
                     key={light.key} id={light.key}
+                    thisLightData={light}
                     title={light.name} subtitle={light.type}
                     switchedOn={light.state.on}
                     updateLightHandler={updateLightHandler}
@@ -25,7 +25,7 @@ export const LightSwitchPanels = (props) => {
     return(
         <div>
             <h3>Manage Lights</h3>
-            <div className="light-switch__panels">
+            <div className="panel-main__wrapper panels-small">
                 {display}
             </div>
         </div>

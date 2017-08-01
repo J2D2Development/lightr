@@ -8,10 +8,8 @@ import FlatButton from 'material-ui/FlatButton';
 import { LightSwitch } from './LightSwitch';
 
 export const LightSwitchPanel = (props) => {
-    //get name of light (passed as title), convert to something useable as a url, and set that as param for individual view (not great, but works for now)
-    const param = props.title.toLowerCase().replace(/\s+/g, '-');
     return(
-        <Card key={props.id} className="light-switch__panel">
+        <Card key={props.id} className="panel-main__panel panel-small">
             <CardHeader title={props.title} subtitle={props.subtitle} />
             <CardTitle title={
                 <LightSwitch 
@@ -22,7 +20,7 @@ export const LightSwitchPanel = (props) => {
             <CardActions>
                 <FlatButton 
                     label="Manage" primary={true} 
-                    containerElement={<Link to={"/dashboard/lights/" + param} />}
+                    containerElement={<Link to={"/dashboard/lights/" + props.thisLightData.lightId} />}
                 />
             </CardActions>
         </Card>

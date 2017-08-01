@@ -6,10 +6,9 @@ import { LightSwitch } from './LightSwitch';
 
 export const LightSwitchIndividualView = (props) => {
     const id = props.match.match.params.lightId;
-    const lightName = id.split('-').join(' ');
     let thisLight;
     for(let light in props.lightData) {
-        if(props.lightData[light].name.toLowerCase() === lightName) {
+        if(light == Number(id) - 1) {
             thisLight = props.lightData[light];
         }
     }
