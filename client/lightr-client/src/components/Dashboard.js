@@ -21,11 +21,11 @@ const FourOhFour = () => {
 class Dashboard extends Component {
     constructor() {
 		super();
-		this.lightsUrl = 'http://localhost:4001/api/lights';
+		this.lightsUrl = `http://192.168.1.12/api/${process.env.API_KEY}`; //'http://localhost:4001/api/lights';
 		this.state = {
 			lightData: {},
 			sidebar: { open: false },
-			snackbar: { open: false }
+			snackbar: { open: false, message: 'Default message' }
 		};
 	}
 
@@ -34,7 +34,7 @@ class Dashboard extends Component {
 	}
 
 	getLightData = (urlBase) => {
-		fetch(urlBase, {
+		fetch(`${urlBase}/lights`, {
 			method: 'GET',
 			headers: new Headers({
 				'Content-Type': 'application/json'
@@ -47,11 +47,10 @@ class Dashboard extends Component {
 			throw new Error('Network error getting light data');
 		}).then(jsonData => {
 			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) }, () => {
-				this.snackbarOpen();
+				this.snackbarOpen('Light Data Retrieved');
 			});
 		}).catch(err => {
-			console.log('error:', err.message);
-			//TODO: snackbar show error
+			this.snackbarOpen(err.message);
 		});
 	}
 
@@ -104,8 +103,30 @@ class Dashboard extends Component {
 		});
 	}
 
-	//TODO: finish and test this when hub is set up, won't work with fake api
-	//setLightState = (urlBase, lightId)
+	setLightState = (urlBase, lightId) => {
+		fetch(`${urlBase}/${lightId}/state`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			console.log('state update error:', response);
+			throw new Error(`Network Error updating light with id ${lightId}`);
+		})
+		.then(jsonData => {
+			console.log('light state updated', jsonData);
+			// this.setState({ lightData: Object.assign(this.state.lightData, jsonData) }, () => {
+			// 	this.snackbarOpen('Light State Updated');
+			// });
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
+	}
 
 	convertLightsToArray(lightData) {
 		let lights = [];
@@ -127,8 +148,35 @@ class Dashboard extends Component {
 	updateLight = (evt) => {
 		const objId = +evt.target.id.match(/\d+/g).join('');
 		const lightData = Object.assign({}, this.state.lightData);
-        lightData[objId].state.on = !lightData[objId].state.on;
-		this.setState({ lightData });
+		const toggleOnState = !lightData[objId].state.on;
+
+		fetch(`${this.lightsUrl}/lights/${objId}/state`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({on: toggleOnState})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating light with id ${objId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
+			
+			lightData[objId].state.on = toggleOnState;
+			this.setState({ lightData }, () => {
+				this.snackbarOpen('Light State Updated');
+			});
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
     }
 
 	toggleSidebar = (val) => {
@@ -143,8 +191,9 @@ class Dashboard extends Component {
 		this.setState({ snackbar });
 	}
 
-	snackbarOpen = () => {
+	snackbarOpen = (message) => {
 		const snackbar = Object.assign({}, this.state.snackbar);
+		snackbar.message = message;
 		snackbar.open = true;
 		this.setState({ snackbar });
 	}
@@ -190,7 +239,7 @@ class Dashboard extends Component {
 
 				<Snackbar 
 					open={this.state.snackbar.open}
-					message="Snackbar test - replace me"
+					message={this.state.snackbar.message}
 					autoHideDuration={4000}
 					onRequestClose={this.snackbarClose}
 				/>

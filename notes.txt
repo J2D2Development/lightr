@@ -10,9 +10,12 @@ LIGHTR PROJECT:
             -in main 'cardmedia' element, create chart of useage, # and type of lists, etc?
         -link up 'manage' button for each to :id view (should be just that light's info as a switch- this will be the view our iphone4 uses for the closet light)
             -find somewhere to have 'edit title' edit groups functionality
-        -snackbar config: set it up to pass message and autoclose delay in open func
-        -set up actual light hub and get it working
-            -remember the docs: your api will need to be /api/<username>/...
+        set node env variable for hue api username
+            -possibly enter api key first on bash: API_KEY='api-key-here'
+            -then run npm start- will react-dev server catch env?  will prod version?
+        -set up groups area of app  
+            -create/manage groups
+            -update group state from individual :id param route
         -find host and link up (probably firebase hosting to enable google login eventually)
 
     make sure updates are pushed live (if update from app, we want the webapp to update live, as the old iphone4 will serve as the on-site switch for the closet)
