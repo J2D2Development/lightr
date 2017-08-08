@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link, Switch } from 'react-router-dom';
+import config from '../config';
 
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
@@ -21,7 +22,7 @@ const FourOhFour = () => {
 class Dashboard extends Component {
     constructor() {
 		super();
-		this.lightsUrl = `http://192.168.1.12/api/${process.env.API_KEY}`; //'http://localhost:4001/api/lights';
+		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`; //'http://localhost:4001/api/lights';
 		this.state = {
 			lightData: {},
 			sidebar: { open: false },
@@ -46,84 +47,11 @@ class Dashboard extends Component {
 			}
 			throw new Error('Network error getting light data');
 		}).then(jsonData => {
+			console.log(jsonData);
 			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) }, () => {
 				this.snackbarOpen('Light Data Retrieved');
 			});
 		}).catch(err => {
-			this.snackbarOpen(err.message);
-		});
-	}
-
-	//TODO: test this when hub is set up, won't work with fake api
-	findNewLights = (urlBase) => {
-		fetch(urlBase, {
-			method: 'POST',
-			headers: new Headers({
-				'Content-Type': 'application/json'
-			})
-		})
-		.then(response => {
-			if(response.ok) {
-				return response.json();
-			}
-			throw new Error('Network Error searching for new lights');
-		})
-		.then(jsonData => {
-			console.log('new lights?', jsonData);
-			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) });
-		})
-		.catch(err => {
-			console.log('error with fetch:', err.message);
-			//TODO: snackbar show error
-		});
-	}
-
-	//TODO: test this when hub is set up, won't work with fake api
-	setLightName = (urlBase, lightId) => {
-		fetch(`${urlBase}/${lightId}`, {
-			method: 'PUT',
-			headers: new Headers({
-				'Content-Type': 'application/json'
-			})
-		})
-		.then(response => {
-			if(response.ok) {
-				return response.json();
-			}
-			throw new Error(`Network Error renaming light with id ${lightId}`);
-		})
-		.then(jsonData => {
-			console.log('light name updated', jsonData);
-			//method only returns new name, so we have to get light data again for update
-			this.getLightData(this.urlBase);
-		})
-		.catch(err => {
-			console.log('error with fetch:', err.message);
-			//TODO: snackbar show error
-		});
-	}
-
-	setLightState = (urlBase, lightId) => {
-		fetch(`${urlBase}/${lightId}/state`, {
-			method: 'PUT',
-			headers: new Headers({
-				'Content-Type': 'application/json'
-			})
-		})
-		.then(response => {
-			if(response.ok) {
-				return response.json();
-			}
-			console.log('state update error:', response);
-			throw new Error(`Network Error updating light with id ${lightId}`);
-		})
-		.then(jsonData => {
-			console.log('light state updated', jsonData);
-			// this.setState({ lightData: Object.assign(this.state.lightData, jsonData) }, () => {
-			// 	this.snackbarOpen('Light State Updated');
-			// });
-		})
-		.catch(err => {
 			this.snackbarOpen(err.message);
 		});
 	}
@@ -145,7 +73,8 @@ class Dashboard extends Component {
 		});
 	}
 
-	updateLight = (evt) => {
+	//currently only works for on/off- can we get all the info?
+	toggleLightState = (evt) => {
 		const objId = +evt.target.id.match(/\d+/g).join('');
 		const lightData = Object.assign({}, this.state.lightData);
 		const toggleOnState = !lightData[objId].state.on;
@@ -170,14 +99,50 @@ class Dashboard extends Component {
 			}
 			
 			lightData[objId].state.on = toggleOnState;
-			this.setState({ lightData }, () => {
-				this.snackbarOpen('Light State Updated');
-			});
+			this.setState({ lightData });
 		})
 		.catch(err => {
 			this.snackbarOpen(err.message);
 		});
-    }
+	}
+
+	//handle slider for bri property of light
+	//TODO: doesn't work too well with fetch on every movement- how to fix?
+	setLightBrightness = (light, value) => {		
+		const lightData = Object.assign({}, this.state.lightData);
+		const objId = light.lightId;
+
+		fetch(`${this.lightsUrl}/lights/${objId}/state`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({bri: value})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating light with id ${objId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
+			
+			lightData[objId].state.bri = value;
+			this.setState({ lightData });
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
+	}
+	
+	//same as update light, but work with groups
+	updateGroup = () => {
+
+	}
 
 	toggleSidebar = (val) => {
 		const sidebar = Object.assign({}, this.state.sidebar);
@@ -252,12 +217,13 @@ class Dashboard extends Component {
 						<Route exact path="/dashboard/lights" 
 							render={()=><LightSwitchPanels 
 								lightData={convertedLightData} 
-								updateLightHandler={this.updateLight} />}
+								updateLightHandler={this.toggleLightState} />}
 						/>
 						<Route path="/dashboard/lights/:lightId" 
 							render={(routeParams)=><LightSwitchIndividualView match={routeParams}
 								lightData={convertedLightData}
-								updateLightHandler={this.updateLight} />
+								updateLightHandler={this.toggleLightState}
+								updateBrightnessHandler={this.setLightBrightness} />
 							} 
 						/>
 						<Route component={FourOhFour} />

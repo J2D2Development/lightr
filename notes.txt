@@ -8,14 +8,14 @@ LIGHTR PROJECT:
     next:
         -main dashboard grid (for now: lights: status of each, link to manage, lists: 'coming soon')
             -in main 'cardmedia' element, create chart of useage, # and type of lists, etc?
-        -link up 'manage' button for each to :id view (should be just that light's info as a switch- this will be the view our iphone4 uses for the closet light)
-            -find somewhere to have 'edit title' edit groups functionality
-        set node env variable for hue api username
-            -possibly enter api key first on bash: API_KEY='api-key-here'
-            -then run npm start- will react-dev server catch env?  will prod version?
+        -manage for each ind light should have brightness and name change functionality
+            -this will not be the view that the phone 'panel' will use, so just add them all
+        set node env variable for hue api username?
+            -won't work until we have a prod server?
         -set up groups area of app  
             -create/manage groups
             -update group state from individual :id param route
+            -on group ind view (for updating state), only allow on/off and dimmer (so easily used from phone size)- no renaming/etc.
         -find host and link up (probably firebase hosting to enable google login eventually)
 
     make sure updates are pushed live (if update from app, we want the webapp to update live, as the old iphone4 will serve as the on-site switch for the closet)
