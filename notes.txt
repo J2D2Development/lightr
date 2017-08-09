@@ -10,13 +10,15 @@ LIGHTR PROJECT:
             -in main 'cardmedia' element, create chart of useage, # and type of lists, etc?
         -manage for each ind light should have brightness and name change functionality
             -this will not be the view that the phone 'panel' will use, so just add them all
+            -currently working but could be better.  set up toggle for both title (normal text and input field) and button (edit vs save for text- add icons as well).  Click 'edit' and it becomes 'save'- the normal text becomes an input field.  Click save and we revert back (on success)
         set node env variable for hue api username?
             -won't work until we have a prod server?
-        -set up groups area of app  
+        -set up light groups area of app  
             -create/manage groups
             -update group state from individual :id param route
             -on group ind view (for updating state), only allow on/off and dimmer (so easily used from phone size)- no renaming/etc.
         -find host and link up (probably firebase hosting to enable google login eventually)
+            -won't need auth for now: lights only work if you're on the same network
 
     make sure updates are pushed live (if update from app, we want the webapp to update live, as the old iphone4 will serve as the on-site switch for the closet)
 

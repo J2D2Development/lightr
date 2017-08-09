@@ -1,7 +1,9 @@
 import React from 'react';
 
 import { Card, CardHeader, CardTitle, CardText } from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
+import TextField from 'material-ui/TextField';
 
 import { LightSwitch } from './LightSwitch';
 
@@ -13,11 +15,24 @@ export const LightSwitchIndividualView = (props) => {
             thisLight = props.lightData[light];
         }
     }
-    console.log(thisLight);
 
 	return(
 		<Card className="light-switch__panel">
-            <CardHeader title={thisLight && thisLight.name} subtitle={thisLight && thisLight.type} />
+            <CardHeader 
+                title={<span>
+                        <TextField 
+                            id={"title" + id} 
+                            value={thisLight && thisLight.name} 
+                            onChange={(evt, value) => props.updateLightNameHandler(thisLight, value)}
+                        />
+                        <FlatButton
+                            label="Save"
+                            primary={true}
+                            onTouchTap={(evt) => props.saveLightNameHandler(thisLight)}
+                        />
+                    </span>} 
+                subtitle={thisLight && thisLight.type} 
+            />
             <CardTitle title={
                 <LightSwitch 
                     id={id} switchedOn={thisLight && thisLight.state.on} 

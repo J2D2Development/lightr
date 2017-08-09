@@ -22,11 +22,15 @@ const FourOhFour = () => {
 class Dashboard extends Component {
     constructor() {
 		super();
-		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`; //'http://localhost:4001/api/lights';
+		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`;
+		this.snackbarSuccessStyles = {
+			backgroundColor: 'green',
+			color: '#fff'
+		};
 		this.state = {
 			lightData: {},
 			sidebar: { open: false },
-			snackbar: { open: false, message: 'Default message' }
+			snackbar: { open: false, message: 'Default message', contentStyle: {} }
 		};
 	}
 
@@ -138,6 +142,44 @@ class Dashboard extends Component {
 			this.snackbarOpen(err.message);
 		});
 	}
+
+	setLightName = (light, value) => {		
+		const lightData = Object.assign({}, this.state.lightData);
+		const objId = light.lightId;
+		lightData[objId].name = value;
+		this.setState({ lightData });
+	}
+
+	saveLightName = (light) => {
+		const objId = light.lightId;
+		const name = light.name;
+
+		fetch(`${this.lightsUrl}/lights/${objId}`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({name})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating light with id ${objId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
+			
+			this.setLightName(light, name);
+			this.snackbarOpen('Name Updated', this.snackbarSuccessStyles);
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
+	}
 	
 	//same as update light, but work with groups
 	updateGroup = () => {
@@ -156,9 +198,10 @@ class Dashboard extends Component {
 		this.setState({ snackbar });
 	}
 
-	snackbarOpen = (message) => {
+	snackbarOpen = (message, style) => {
 		const snackbar = Object.assign({}, this.state.snackbar);
 		snackbar.message = message;
+		snackbar.contentStyle = style;
 		snackbar.open = true;
 		this.setState({ snackbar });
 	}
@@ -205,6 +248,8 @@ class Dashboard extends Component {
 				<Snackbar 
 					open={this.state.snackbar.open}
 					message={this.state.snackbar.message}
+					bodyStyle={this.state.snackbar.contentStyle}
+					contentStyle={this.state.snackbar.contentStyle}
 					autoHideDuration={4000}
 					onRequestClose={this.snackbarClose}
 				/>
@@ -223,7 +268,9 @@ class Dashboard extends Component {
 							render={(routeParams)=><LightSwitchIndividualView match={routeParams}
 								lightData={convertedLightData}
 								updateLightHandler={this.toggleLightState}
-								updateBrightnessHandler={this.setLightBrightness} />
+								updateBrightnessHandler={this.setLightBrightness}
+								updateLightNameHandler={this.setLightName}
+								saveLightNameHandler={this.saveLightName} />
 							} 
 						/>
 						<Route component={FourOhFour} />
