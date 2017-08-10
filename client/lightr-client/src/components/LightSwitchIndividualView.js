@@ -10,6 +10,7 @@ import { LightSwitch } from './LightSwitch';
 export const LightSwitchIndividualView = (props) => {
     const id = props.match.match.params.lightId;
     let thisLight;
+
     for(let light in props.lightData) {
         if(light == Number(id) - 1) {
             thisLight = props.lightData[light];
@@ -19,18 +20,38 @@ export const LightSwitchIndividualView = (props) => {
 	return(
 		<Card className="light-switch__panel">
             <CardHeader 
-                title={<span>
+                title={
+                    props.titleEdit.show ?
+                    <span>
                         <TextField 
                             id={"title" + id} 
                             value={thisLight && thisLight.name} 
-                            onChange={(evt, value) => props.updateLightNameHandler(thisLight, value)}
+                            onChange={(evt, value) => {
+                                    props.updateLightNameHandler(thisLight, value);
+                                }
+                            }
+                            autoFocus
                         />
                         <FlatButton
                             label="Save"
                             primary={true}
                             onTouchTap={(evt) => props.saveLightNameHandler(thisLight)}
                         />
-                    </span>} 
+                        <FlatButton
+                            label="Cancel"
+                            secondary={true}
+                            onTouchTap={props.hideTitleEdit}
+                        />
+                    </span> :
+                    <span>
+                        {thisLight && thisLight.name}
+                        <FlatButton
+                            label="Edit"
+                            primary={true}
+                            onTouchTap={props.showTitleEdit}
+                        />
+                    </span>
+                } 
                 subtitle={thisLight && thisLight.type} 
             />
             <CardTitle title={

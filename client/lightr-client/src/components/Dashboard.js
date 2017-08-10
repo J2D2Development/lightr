@@ -22,13 +22,14 @@ const FourOhFour = () => {
 class Dashboard extends Component {
     constructor() {
 		super();
-		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`;
+		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`; //`http://localhost:8001/api/lights`;
 		this.snackbarSuccessStyles = {
 			backgroundColor: 'green',
 			color: '#fff'
 		};
 		this.state = {
 			lightData: {},
+			lightTitleEdit: { show: false },
 			sidebar: { open: false },
 			snackbar: { open: false, message: 'Default message', contentStyle: {} }
 		};
@@ -75,6 +76,18 @@ class Dashboard extends Component {
 			light.key = `light-${index + 1}`;
 			return light;
 		});
+	}
+
+	showTitleEdit = () => { 
+		const lightTitleEdit = Object.assign({}, this.state.lightTitleEdit);
+		lightTitleEdit.show = true;
+		this.setState({ lightTitleEdit} );
+	}
+
+    hideTitleEdit = () => { 
+		const lightTitleEdit = Object.assign({}, this.state.lightTitleEdit);
+		lightTitleEdit.show = false;
+		this.setState({ lightTitleEdit} );
 	}
 
 	//currently only works for on/off- can we get all the info?
@@ -174,6 +187,7 @@ class Dashboard extends Component {
 			}
 			
 			this.setLightName(light, name);
+			this.hideTitleEdit();
 			this.snackbarOpen('Name Updated', this.snackbarSuccessStyles);
 		})
 		.catch(err => {
@@ -270,7 +284,10 @@ class Dashboard extends Component {
 								updateLightHandler={this.toggleLightState}
 								updateBrightnessHandler={this.setLightBrightness}
 								updateLightNameHandler={this.setLightName}
-								saveLightNameHandler={this.saveLightName} />
+								saveLightNameHandler={this.saveLightName}
+								titleEdit={this.state.lightTitleEdit}
+								showTitleEdit={this.showTitleEdit}
+								hideTitleEdit={this.hideTitleEdit} />
 							} 
 						/>
 						<Route component={FourOhFour} />
