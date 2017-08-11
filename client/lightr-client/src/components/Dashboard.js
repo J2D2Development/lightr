@@ -30,6 +30,7 @@ class Dashboard extends Component {
 		this.state = {
 			lightData: {},
 			lightTitleEdit: { show: false },
+			groupData: {},
 			sidebar: { open: false },
 			snackbar: { open: false, message: 'Default message', contentStyle: {} }
 		};
@@ -37,6 +38,7 @@ class Dashboard extends Component {
 
 	componentWillMount = () => {
 		this.getLightData(this.lightsUrl);
+		this.getGroupData(this.lightsUrl);
 	}
 
 	getLightData = (urlBase) => {
@@ -52,10 +54,28 @@ class Dashboard extends Component {
 			}
 			throw new Error('Network error getting light data');
 		}).then(jsonData => {
+			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) });
+		}).catch(err => {
+			console.log(err);
+			this.snackbarOpen(err.message);
+		});
+	}
+
+	getGroupData = (urlBase) => {
+		fetch(`${urlBase}/groups`, {
+			method: 'GET',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error('Network error getting group data');
+		}).then(jsonData => {
 			console.log(jsonData);
-			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) }, () => {
-				this.snackbarOpen('Light Data Retrieved');
-			});
+			this.setState({ groupData: Object.assign(this.state.groupData, jsonData) });
 		}).catch(err => {
 			this.snackbarOpen(err.message);
 		});
@@ -90,7 +110,6 @@ class Dashboard extends Component {
 		this.setState({ lightTitleEdit} );
 	}
 
-	//currently only works for on/off- can we get all the info?
 	toggleLightState = (evt) => {
 		const objId = +evt.target.id.match(/\d+/g).join('');
 		const lightData = Object.assign({}, this.state.lightData);
@@ -117,6 +136,40 @@ class Dashboard extends Component {
 			
 			lightData[objId].state.on = toggleOnState;
 			this.setState({ lightData });
+			this.getGroupData(this.lightsUrl);
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
+	}
+
+	toggleGroupState = (evt) => {
+		const objId = +evt.target.id.match(/\d+/g).join('');
+		const groupData = Object.assign({}, this.state.groupData);
+		const toggleOnState = !groupData[objId].state.all_on;
+
+		fetch(`${this.lightsUrl}/groups/${objId}/action`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({on: toggleOnState})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating group with id ${objId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
+			
+			groupData[objId].state.all_on = toggleOnState;
+			this.setState({ groupData });
+			this.getLightData(this.lightsUrl);
 		})
 		.catch(err => {
 			this.snackbarOpen(err.message);
@@ -231,6 +284,7 @@ class Dashboard extends Component {
     
     render() {
 		const convertedLightData = this.convertLightsToArray(this.state.lightData);
+		const convertedGroupData = this.convertLightsToArray(this.state.groupData);
 
         return(
             <div style={this.styles.mainDashStyle}>
@@ -271,12 +325,17 @@ class Dashboard extends Component {
 				<div style={this.styles.viewportStyle}>
 					<Switch>
 						<Route exact path="/dashboard" 
-							render={()=><DashboardMain lightData={convertedLightData}/>} 
+							render={()=><DashboardMain 
+								lightData={convertedLightData}
+								groupData={convertedGroupData}
+							/>} 
 						/>
 						<Route exact path="/dashboard/lights" 
 							render={()=><LightSwitchPanels 
 								lightData={convertedLightData} 
-								updateLightHandler={this.toggleLightState} />}
+								updateLightHandler={this.toggleLightState}
+								groupData={convertedGroupData}
+								updateGroupHandler={this.toggleGroupState} />}
 						/>
 						<Route path="/dashboard/lights/:lightId" 
 							render={(routeParams)=><LightSwitchIndividualView match={routeParams}

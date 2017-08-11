@@ -59,6 +59,7 @@ h1, h2, h3, h4, h5 {
 }
 .panel-small {
   margin-right: 1em;
+  min-width: 25%;
 }
 .panel-half__lg {
   width: 48%;
@@ -70,6 +71,7 @@ h1, h2, h3, h4, h5 {
     min-width: 100%;
   }
   .panel-main__panel, .panel-small {
+    min-width: 100%;
     margin-bottom: 1em;
     margin-right: 0;
   }

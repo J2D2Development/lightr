@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { LightSwitchPanel } from './LightSwitchPanel';
 
 export const LightSwitchPanels = (props) => {
+    //handle individual lights
     let lightData = props.lightData;
     let updateLightHandler = props.updateLightHandler;
     let display = [];
-
     if(lightData) {
         display = lightData.map((light, index) => {
             return (
@@ -22,11 +22,33 @@ export const LightSwitchPanels = (props) => {
         });
     }
 
+    //handle groups
+    let groupData = props.groupData;
+    let updateGroupHandler = props.updateGroupHandler;
+    let groupDisplay =[];
+    if(groupData) {
+        groupDisplay = groupData.map((group, index) => {
+            return (
+                <LightSwitchPanel
+                    key={group.key} id={group.key}
+                    thisLightData={group}
+                    title={group.name} subtitle={group.type}
+                    switchedOn={group.state.all_on}
+                    updateLightHandler={updateGroupHandler}
+                />
+            );
+        });
+    }
+
     return(
         <div>
-            <h3>Manage Lights</h3>
+            <h3>Individual Lights</h3>
             <div className="panel-main__wrapper panels-small">
                 {display}
+            </div>
+            <h3>Groups</h3>
+            <div className="panel-main__wrapper panels-small">
+                {groupDisplay.length > 0 ? groupDisplay : "No Groups Currently Available!"}
             </div>
         </div>
     );
