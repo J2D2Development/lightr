@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link, Switch } from 'react-router-dom';
+import 'whatwg-fetch'; 
 import config from '../config';
 
 import AppBar from 'material-ui/AppBar';
@@ -12,6 +13,7 @@ import Snackbar from 'material-ui/Snackbar';
 import { DashboardMain } from './DashboardMain';
 import { LightSwitchPanels } from './LightSwitchPanels';
 import { LightSwitchIndividualView } from './LightSwitchIndividualView';
+import { GroupSwitchIndividualView } from './GroupSwitchIndividualView';
 
 const FourOhFour = () => {
 	return(
@@ -24,7 +26,11 @@ class Dashboard extends Component {
 		super();
 		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`; //`http://localhost:8001/api/lights`;
 		this.snackbarSuccessStyles = {
-			backgroundColor: 'green',
+			backgroundColor: '#27ae60',
+			color: '#fff'
+		};
+		this.snackbarFailStyles = {
+			backgroundColor: '#e74c3c',
 			color: '#fff'
 		};
 		this.state = {
@@ -74,27 +80,26 @@ class Dashboard extends Component {
 			}
 			throw new Error('Network error getting group data');
 		}).then(jsonData => {
-			console.log(jsonData);
 			this.setState({ groupData: Object.assign(this.state.groupData, jsonData) });
 		}).catch(err => {
 			this.snackbarOpen(err.message);
 		});
 	}
 
-	convertLightsToArray(lightData) {
-		let lights = [];
+	convertToArray(data, type) {
+		let toReturn = [];
 
-		for(const item in lightData) {
-			if(lightData.hasOwnProperty(item)) {
-				//need ref to the original object's prop (id number) for updating later
-				lightData[item]['lightId'] = item;
-				lights.push(lightData[item]);
+		for(const item in data) {
+			if(data.hasOwnProperty(item)) {
+				data[item]['myId'] = item;
+				toReturn.push(data[item]);
 			}
 		}
 
-		return [...lights].map((light, index) => {
-			light.key = `light-${index + 1}`;
-			return light;
+		return [...toReturn].map((item, index) => {
+			item.key = `${type}-${index + 1}`;
+			item.linkTarget = `${type}s`;
+			return item;
 		});
 	}
 
@@ -180,7 +185,7 @@ class Dashboard extends Component {
 	//TODO: doesn't work too well with fetch on every movement- how to fix?
 	setLightBrightness = (light, value) => {		
 		const lightData = Object.assign({}, this.state.lightData);
-		const objId = light.lightId;
+		const objId = light.myId;
 
 		fetch(`${this.lightsUrl}/lights/${objId}/state`, {
 			method: 'PUT',
@@ -211,13 +216,13 @@ class Dashboard extends Component {
 
 	setLightName = (light, value) => {		
 		const lightData = Object.assign({}, this.state.lightData);
-		const objId = light.lightId;
+		const objId = light.myId;
 		lightData[objId].name = value;
 		this.setState({ lightData });
 	}
 
 	saveLightName = (light) => {
-		const objId = light.lightId;
+		const objId = light.myId;
 		const name = light.name;
 
 		fetch(`${this.lightsUrl}/lights/${objId}`, {
@@ -248,9 +253,43 @@ class Dashboard extends Component {
 		});
 	}
 	
-	//same as update light, but work with groups
-	updateGroup = () => {
+	setGroupName = (group, value) => {		
+		const groupData = Object.assign({}, this.state.groupData);
+		const objId = group.myId;
+		groupData[objId].name = value;
+		this.setState({ groupData });
+	}
 
+	saveGroupName = (group) => {
+		const objId = group.myId;
+		const name = group.name;
+
+		fetch(`${this.lightsUrl}/groups/${objId}`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({name})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating group with id ${objId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
+			
+			this.setGroupName(group, name);
+			this.hideTitleEdit();
+			this.snackbarOpen('Group Updated', this.snackbarSuccessStyles);
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
 	}
 
 	toggleSidebar = (val) => {
@@ -283,8 +322,8 @@ class Dashboard extends Component {
 
     
     render() {
-		const convertedLightData = this.convertLightsToArray(this.state.lightData);
-		const convertedGroupData = this.convertLightsToArray(this.state.groupData);
+		const convertedLightData = this.convertToArray(this.state.lightData, 'light');
+		const convertedGroupData = this.convertToArray(this.state.groupData, 'group');
 
         return(
             <div style={this.styles.mainDashStyle}>
@@ -344,6 +383,18 @@ class Dashboard extends Component {
 								updateBrightnessHandler={this.setLightBrightness}
 								updateLightNameHandler={this.setLightName}
 								saveLightNameHandler={this.saveLightName}
+								titleEdit={this.state.lightTitleEdit}
+								showTitleEdit={this.showTitleEdit}
+								hideTitleEdit={this.hideTitleEdit} />
+							} 
+						/>
+						<Route path="/dashboard/groups/:groupId" 
+							render={(routeParams)=><GroupSwitchIndividualView match={routeParams}
+								groupData={convertedGroupData}
+								updateGroupHandler={this.toggleGroupState}
+								updateBrightnessHandler={this.setLightBrightness}
+								updateLightNameHandler={this.setGroupName}
+								saveLightNameHandler={this.saveGroupName}
 								titleEdit={this.state.lightTitleEdit}
 								showTitleEdit={this.showTitleEdit}
 								hideTitleEdit={this.hideTitleEdit} />

@@ -76,9 +76,3 @@ h1, h2, h3, h4, h5 {
     margin-right: 0;
   }
 }
-
-/*CUSTOM SNACKBAR STYLING*/
-.snackbar-success {
-  background-color: green;
-  color: #fff;
-}

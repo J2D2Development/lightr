@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { LightSwitchPanel } from './LightSwitchPanel';
 
 export const LightSwitchPanels = (props) => {
+    console.log(props);
     //handle individual lights
     let lightData = props.lightData;
     let updateLightHandler = props.updateLightHandler;

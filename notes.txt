@@ -9,17 +9,29 @@ LIGHTR PROJECT:
         -main dashboard grid (for now: lights: status of each, link to manage, lists: 'coming soon')
             -in main 'cardmedia' element, create chart of useage, # and type of lists, etc?
         -manage for each ind light should have brightness and name change functionality
-            -this will not be the view that the phone 'panel' will use, so just add them all
             -currently working but could be better.  LightSwitchIndividualView.js file- find better styling for normal title vs input field edit (more consistent).  Possible to add animation (horizontal transition) on change?
         set node env variable for hue api username?
             -won't work until we have a prod server?
         -set up light groups area of app  
-            -create/manage groups
-            -update group state from individual :id param route
-            -on group ind view (for updating state), only allow on/off and dimmer (so easily used from phone size)- no renaming/etc.
+            -create/manage groups.
         -find host and link up (probably firebase hosting to enable google login eventually)
+            -be sure to npm run build for prod build and push that to firebase hosting
+            -find domain name!
             -won't need auth for now: lights only work if you're on the same network
+        -implement fetch and promises polyfill (ip4 only has ios/safari V7- no native fetch or promises)
+            https://github.com/github/fetch
+            https://github.com/taylorhakes/promise-polyfill
+                -both installed, working?  not yet sure.
+            -check on react- will it work in a version of safari that old?  a2 doesn't seem to :<(
+                -if all else fails, buy super cheap android phone and put chrome on it.  That will eliminate this issue and eliminate the need for polyfills above!
         -test on laptop from outside home network (should fail to load lights info).  add nice 'no access' msg, but allow access to other areas if logged in.
+            -successfully fails (ha!).  Makes sense- it's requesting access to a local network address (192) that doesn't exist.  just need to add a check for that and notice on failure.
+        -loading animation  
+            -small and large (for individual cards and overall)
+
+    when done post launch:
+        create new branch for refactoring
+            -a lot of repeated methods on Dashboard.js for lights vs groups- find a way to share!
 
     make sure updates are pushed live (if update from app, we want the webapp to update live, as the old iphone4 will serve as the on-site switch for the closet)
 
