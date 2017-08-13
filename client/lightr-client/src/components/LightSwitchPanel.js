@@ -26,7 +26,7 @@ export const LightSwitchPanel = (props) => {
                     props.thisLightData.linkTarget === 'groups' &&
                     <FlatButton 
                         label="Edit" secondary={true} 
-                        containerElement={<Link to={"/dashboard/" + props.thisLightData.linkTarget + "/" + props.thisLightData.myId} />}
+                        containerElement={<Link to={"/dashboard/" + props.thisLightData.linkTarget + "/" + props.thisLightData.myId + "/edit"} />}
                     />
                 }
             </CardActions>

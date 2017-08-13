@@ -14,6 +14,8 @@ LIGHTR PROJECT:
             -won't work until we have a prod server?
         -set up light groups area of app  
             -create/manage groups.
+                -continue with manage: link up chips to add/remove to/from groups
+                -create 'add new group' icon in main 'manage' view
         -find host and link up (probably firebase hosting to enable google login eventually)
             -be sure to npm run build for prod build and push that to firebase hosting
             -find domain name!
@@ -28,10 +30,12 @@ LIGHTR PROJECT:
             -successfully fails (ha!).  Makes sense- it's requesting access to a local network address (192) that doesn't exist.  just need to add a check for that and notice on failure.
         -loading animation  
             -small and large (for individual cards and overall)
+        -'welcome' screen graphics (create something cool in canvas?)
 
     when done post launch:
         create new branch for refactoring
             -a lot of repeated methods on Dashboard.js for lights vs groups- find a way to share!
+            -destructure LightSwitchIndividualView and groupswitchindividualview- large components that could be broken down
 
     make sure updates are pushed live (if update from app, we want the webapp to update live, as the old iphone4 will serve as the on-site switch for the closet)
 

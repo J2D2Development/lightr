@@ -14,6 +14,7 @@ import { DashboardMain } from './DashboardMain';
 import { LightSwitchPanels } from './LightSwitchPanels';
 import { LightSwitchIndividualView } from './LightSwitchIndividualView';
 import { GroupSwitchIndividualView } from './GroupSwitchIndividualView';
+import { GroupEdit } from './GroupEdit.js';
 
 const FourOhFour = () => {
 	return(
@@ -181,7 +182,7 @@ class Dashboard extends Component {
 		});
 	}
 
-	//handle slider for bri property of light
+	//handle slider for bri property of individual light
 	//TODO: doesn't work too well with fetch on every movement- how to fix?
 	setLightBrightness = (light, value) => {		
 		const lightData = Object.assign({}, this.state.lightData);
@@ -208,6 +209,40 @@ class Dashboard extends Component {
 			
 			lightData[objId].state.bri = value;
 			this.setState({ lightData });
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
+	}
+
+	//handle slider for bri property of group
+	//TODO: doesn't work too well with fetch on every movement- how to fix?
+	setGroupBrightness = (group, value) => {		
+		const groupData = Object.assign({}, this.state.groupData);
+		const objId = group.myId;
+
+		fetch(`${this.lightsUrl}/groups/${objId}/action`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({bri: value})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating group with id ${objId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
+			
+			groupData[objId].action.bri = value;
+			this.setState({ groupData });
+			this.getLightData(this.lightsUrl);
 		})
 		.catch(err => {
 			this.snackbarOpen(err.message);
@@ -290,6 +325,39 @@ class Dashboard extends Component {
 		.catch(err => {
 			this.snackbarOpen(err.message);
 		});
+	}
+
+	saveGroupData = (group) => {
+		console.log('group data update:', group);
+		// const objId = group.myId;
+		// const name = group.name;
+
+		// fetch(`${this.lightsUrl}/groups/${objId}`, {
+		// 	method: 'PUT',
+		// 	headers: new Headers({
+		// 		'Content-Type': 'application/json'
+		// 	}),
+		// 	body: JSON.stringify({name})
+		// })
+		// .then(response => {
+		// 	if(response.ok) {
+		// 		return response.json();
+		// 	}
+		// 	throw new Error(`Network Error updating group with id ${objId}`);
+		// })
+		// .then(jsonData => {
+		// 	if(jsonData[0].error) {
+		// 		this.snackbarOpen(jsonData[0].error.description);
+		// 		return;
+		// 	}
+			
+		// 	this.setGroupName(group, name);
+		// 	this.hideTitleEdit();
+		// 	this.snackbarOpen('Group Updated', this.snackbarSuccessStyles);
+		// })
+		// .catch(err => {
+		// 	this.snackbarOpen(err.message);
+		// });
 	}
 
 	toggleSidebar = (val) => {
@@ -376,7 +444,7 @@ class Dashboard extends Component {
 								groupData={convertedGroupData}
 								updateGroupHandler={this.toggleGroupState} />}
 						/>
-						<Route path="/dashboard/lights/:lightId" 
+						<Route exact path="/dashboard/lights/:lightId" 
 							render={(routeParams)=><LightSwitchIndividualView match={routeParams}
 								lightData={convertedLightData}
 								updateLightHandler={this.toggleLightState}
@@ -388,17 +456,25 @@ class Dashboard extends Component {
 								hideTitleEdit={this.hideTitleEdit} />
 							} 
 						/>
-						<Route path="/dashboard/groups/:groupId" 
+						<Route exact path="/dashboard/groups/:groupId" 
 							render={(routeParams)=><GroupSwitchIndividualView match={routeParams}
 								groupData={convertedGroupData}
 								updateGroupHandler={this.toggleGroupState}
-								updateBrightnessHandler={this.setLightBrightness}
+								updateBrightnessHandler={this.setGroupBrightness}
 								updateLightNameHandler={this.setGroupName}
 								saveLightNameHandler={this.saveGroupName}
 								titleEdit={this.state.lightTitleEdit}
 								showTitleEdit={this.showTitleEdit}
 								hideTitleEdit={this.hideTitleEdit} />
 							} 
+						/>
+						<Route exact path="/dashboard/groups/:groupId/edit"
+							render={(routeParams) => <GroupEdit match={routeParams}
+								lightData={convertedLightData}
+								groupData={convertedGroupData}
+								updateGroupNameHandler={this.setGroupName}
+								updateGroupSettings={this.updateGroupSettings} />
+							}
 						/>
 						<Route component={FourOhFour} />
 					</Switch>

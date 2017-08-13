@@ -16,7 +16,6 @@ export const GroupSwitchIndividualView = (props) => {
             thisItem = props.groupData[item];
         }
     }
-    console.log(thisItem);
 
 	return(
 		<Card className="light-switch__panel">
@@ -48,6 +47,7 @@ export const GroupSwitchIndividualView = (props) => {
                     <span>
                         {thisItem && thisItem.name}
                         <FlatButton
+                            className="light-switch__panel-hidesmall"
                             label="Edit"
                             primary={true}
                             onTouchTap={props.showTitleEdit}
@@ -63,13 +63,13 @@ export const GroupSwitchIndividualView = (props) => {
                 />}
             />
             <CardText>
-                Current Brightness: {thisItem && (thisItem.state.on ? thisItem.state.bri : 'Off')}
+                Current Brightness: {thisItem && (thisItem.state.all_on ? thisItem.action.bri : 'Off')}
                 <Slider
                     disabled={thisItem && !thisItem.state.all_on}
                     min={0}
                     max={255}
                     step={1}
-                    value={thisItem && thisItem.state.bri}
+                    value={thisItem && thisItem.action.bri}
                     onChange={(evt, value) => props.updateBrightnessHandler(thisItem, value)}
                 />
             </CardText>

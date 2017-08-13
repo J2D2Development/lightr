@@ -38,11 +38,11 @@ export const DashboardMain = (props) => {
                 />
                 <CardTitle title={'Total Available: ' + lists.length} />
                 <CardText>
-                    View and update shopping and/or task lists.  Coming soon...
+                    View and update shopping and/or task lists.  <em>Coming soon...</em>
                 </CardText>
                 <CardActions>
-                    <FlatButton label="Click to Manage" primary={true} 
-                        containerElement={<Link to="/dashboard/lists" />} 
+                    <FlatButton label="Click to Manage" primary={true} disabled={true}
+                        // containerElement={<Link to="/dashboard/lists" />} 
                     />
                 </CardActions>
             </Card>
