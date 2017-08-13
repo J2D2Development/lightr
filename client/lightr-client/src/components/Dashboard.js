@@ -319,7 +319,6 @@ class Dashboard extends Component {
 			}
 			
 			this.setGroupName(group, name);
-			this.hideTitleEdit();
 			this.snackbarOpen('Group Updated', this.snackbarSuccessStyles);
 		})
 		.catch(err => {
@@ -327,37 +326,76 @@ class Dashboard extends Component {
 		});
 	}
 
-	saveGroupData = (group) => {
-		console.log('group data update:', group);
-		// const objId = group.myId;
-		// const name = group.name;
+	addLightToGroup = (groupId, lightId) => {
+		const groupData = Object.assign({}, this.state.groupData);
+		const lightsArray = groupData[groupId].lights;
+		lightsArray.push(lightId);
 
-		// fetch(`${this.lightsUrl}/groups/${objId}`, {
-		// 	method: 'PUT',
-		// 	headers: new Headers({
-		// 		'Content-Type': 'application/json'
-		// 	}),
-		// 	body: JSON.stringify({name})
-		// })
-		// .then(response => {
-		// 	if(response.ok) {
-		// 		return response.json();
-		// 	}
-		// 	throw new Error(`Network Error updating group with id ${objId}`);
-		// })
-		// .then(jsonData => {
-		// 	if(jsonData[0].error) {
-		// 		this.snackbarOpen(jsonData[0].error.description);
-		// 		return;
-		// 	}
+		fetch(`${this.lightsUrl}/groups/${groupId}`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({ lights: lightsArray})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating group with id ${groupId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
 			
-		// 	this.setGroupName(group, name);
-		// 	this.hideTitleEdit();
-		// 	this.snackbarOpen('Group Updated', this.snackbarSuccessStyles);
-		// })
-		// .catch(err => {
-		// 	this.snackbarOpen(err.message);
-		// });
+			this.setState({ groupData });
+			this.snackbarOpen('Group Updated', this.snackbarSuccessStyles);
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
+	}
+
+	removeLightFromGroup = (groupId, lightId) => {		
+		const groupData = Object.assign({}, this.state.groupData);
+		const lightsArray = groupData[groupId].lights;
+
+		if(lightsArray.length === 1) {
+			this.snackbarOpen('Cannot remove last light from group!', this.snackbarFailStyles);
+			return;
+		}
+
+		lightsArray.splice(lightsArray.indexOf(lightId), 1);
+
+		console.log('group data after remove:', groupData);
+
+		fetch(`${this.lightsUrl}/groups/${groupId}`, {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json'
+			}),
+			body: JSON.stringify({lights: lightsArray})
+		})
+		.then(response => {
+			if(response.ok) {
+				return response.json();
+			}
+			throw new Error(`Network Error updating group with id ${groupId}`);
+		})
+		.then(jsonData => {
+			if(jsonData[0].error) {
+				this.snackbarOpen(jsonData[0].error.description);
+				return;
+			}
+			
+			this.setState({ groupData });
+			this.snackbarOpen('Group Updated', this.snackbarSuccessStyles);
+		})
+		.catch(err => {
+			this.snackbarOpen(err.message);
+		});
 	}
 
 	toggleSidebar = (val) => {
@@ -473,7 +511,9 @@ class Dashboard extends Component {
 								lightData={convertedLightData}
 								groupData={convertedGroupData}
 								updateGroupNameHandler={this.setGroupName}
-								updateGroupSettings={this.updateGroupSettings} />
+								saveGroupNameHandler={this.saveGroupName}
+								addLightToGroup={this.addLightToGroup}
+								removeLightFromGroup={this.removeLightFromGroup} />
 							}
 						/>
 						<Route component={FourOhFour} />

@@ -15,6 +15,7 @@ LIGHTR PROJECT:
         -set up light groups area of app  
             -create/manage groups.
                 -continue with manage: link up chips to add/remove to/from groups
+                    -works- see if you can change the 'delete icon' on chip to make + icon?
                 -create 'add new group' icon in main 'manage' view
         -find host and link up (probably firebase hosting to enable google login eventually)
             -be sure to npm run build for prod build and push that to firebase hosting
