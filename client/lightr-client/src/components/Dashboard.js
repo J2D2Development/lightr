@@ -26,18 +26,14 @@ class Dashboard extends Component {
     constructor() {
 		super();
 		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`; //`http://localhost:8001/api/lights`;
-		this.snackbarSuccessStyles = {
-			backgroundColor: '#27ae60',
-			color: '#fff'
-		};
-		this.snackbarFailStyles = {
-			backgroundColor: '#e74c3c',
-			color: '#fff'
-		};
+		this.snackbarSuccessStyles = { backgroundColor: '#27ae60', color: '#fff' };
+		this.snackbarFailStyles = { backgroundColor: '#e74c3c', color: '#fff' };
 		this.state = {
 			lightData: {},
+			lightFetchStatus: { success: false, loading: true },
 			lightTitleEdit: { show: false },
 			groupData: {},
+			groupFetchStatus: { success: false, loading: true },
 			sidebar: { open: false },
 			snackbar: { open: false, message: 'Default message', contentStyle: {} }
 		};
@@ -56,6 +52,12 @@ class Dashboard extends Component {
 			})
 		})
 		.then(response => {
+			this.setState({ 
+				lightFetchStatus: Object.assign(this.state.lightFetchStatus, { 
+					loading: false,
+					success: true
+				})
+			});
 			if(response.ok) {
 				return response.json();
 			}
@@ -63,8 +65,14 @@ class Dashboard extends Component {
 		}).then(jsonData => {
 			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) });
 		}).catch(err => {
+			this.setState({ 
+				lightFetchStatus: Object.assign(this.state.lightFetchStatus, { 
+						loading: false, 
+						success: false
+					})
+				});
 			console.log(err);
-			this.snackbarOpen(err.message);
+			this.snackbarOpen(err.message, this.snackbarFailStyles);
 		});
 	}
 
@@ -76,6 +84,12 @@ class Dashboard extends Component {
 			})
 		})
 		.then(response => {
+			this.setState({ 
+				groupFetchStatus: Object.assign(this.state.groupFetchStatus, { 
+					loading: false,
+					success: true
+				})
+			});
 			if(response.ok) {
 				return response.json();
 			}
@@ -83,7 +97,13 @@ class Dashboard extends Component {
 		}).then(jsonData => {
 			this.setState({ groupData: Object.assign(this.state.groupData, jsonData) });
 		}).catch(err => {
-			this.snackbarOpen(err.message);
+			this.setState({ 
+				groupFetchStatus: Object.assign(this.state.groupFetchStatus, { 
+					loading: false,
+					success: false 
+				})
+			});			
+			this.snackbarOpen(err.message, this.snackbarFailStyles);
 		});
 	}
 
@@ -472,7 +492,9 @@ class Dashboard extends Component {
 						<Route exact path="/dashboard" 
 							render={()=><DashboardMain 
 								lightData={convertedLightData}
+								lightFetchStatus={this.state.lightFetchStatus}
 								groupData={convertedGroupData}
+								groupFetchStatus={this.state.groupFetchStatus}
 							/>} 
 						/>
 						<Route exact path="/dashboard/lights" 

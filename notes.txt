@@ -53,6 +53,7 @@ for tplink smart plug:
 
 
 LEARNING PROJECTS
+https://github.com/kwhinnery/node-workshop/tree/master/challenge1
 https://www.interviewcake.com/question/javascript/product-of-other-numbers
 
 http://www.codewars.com/kata/langtons-ant?utm_source=newsletter

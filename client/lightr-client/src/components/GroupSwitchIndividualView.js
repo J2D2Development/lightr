@@ -12,6 +12,7 @@ export const GroupSwitchIndividualView = (props) => {
     let thisItem;
 
     for(let item in props.groupData) {
+        /*eslint-disable*/
         if(item == Number(id) - 1) {
             thisItem = props.groupData[item];
         }

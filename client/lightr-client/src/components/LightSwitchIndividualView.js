@@ -12,6 +12,7 @@ export const LightSwitchIndividualView = (props) => {
     let thisLight;
 
     for(let light in props.lightData) {
+        /*eslint-disable*/
         if(light == Number(id) - 1) {
             thisLight = props.lightData[light];
         }

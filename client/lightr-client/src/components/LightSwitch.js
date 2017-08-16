@@ -16,8 +16,8 @@ export const LightSwitch = (props) => {
     );
 }
 
-// LightSwitch.propTypes = {
-//     id: PropTypes.string.isRequired,
-//     switchedOn: PropTypes.bool.isRequired,
-//     updateLightHandler: PropTypes.func.isRequired
-// }
+LightSwitch.propTypes = {
+    id: PropTypes.string.isRequired,
+    switchedOn: PropTypes.bool.isRequired,
+    updateLightHandler: PropTypes.func.isRequired
+}

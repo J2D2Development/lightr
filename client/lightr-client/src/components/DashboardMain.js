@@ -9,6 +9,16 @@ export const DashboardMain = (props) => {
     const lights = props.lightData;
     const groups = props.groupData;
     const lists = [];
+    const loadErrorStyle = {
+        fontWeight: 'italic',
+        fontSize: '0.75em',
+        marginTop: '0.5em',
+        textAlign: 'center',
+        color: '#e74c3c'
+    };
+
+    const loadingComplete = !props.lightFetchStatus.loading && !props.groupFetchStatus.loading;
+    const loadingFailed = loadingComplete && (!props.lightFetchStatus.success && !props.groupFetchStatus.success);
 
     return(
         <div className="panel-main__wrapper">
@@ -22,14 +32,35 @@ export const DashboardMain = (props) => {
                         View and update the status of lights enabled with online control at Bluebell Cottage
                     </div>
                     <div>
-                        <div>Total Lights Available: {lights.length}</div>
-                        <div>Total Groups Available: {groups.length}</div>
+                        {props.lightFetchStatus.loading ? 
+                            <div>Loading Light Data...</div>
+                            :
+                            <div>Total Lights Available: {lights.length}</div>
+                        }
+                        {props.groupFetchStatus.loading ?
+                            <div>Loading Group Data...</div>
+                            :
+                            <div>Total Groups Available: {groups.length}</div>
+                        }
                     </div>
                 </CardText>
                 <CardActions>
-                    <FlatButton label="Change Status" primary={true} 
+                    <FlatButton label={
+                            (loadingComplete)
+                            ?
+                            "Change Status"
+                            :
+                            "Loading..."
+                        } 
+                        primary={true} 
+                        disabled={!loadingComplete || loadingFailed}
                         containerElement={<Link to="/dashboard/lights" />} 
                     />
+                    {
+                        loadingFailed
+                        &&
+                        <div style={loadErrorStyle}>Lights currently unavailable- looks like you might be on the wrong network!</div>
+                    }
                 </CardActions>
             </Card>
             <Card className="panel-main__panel panel-half__lg">

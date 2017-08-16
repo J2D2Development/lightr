@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 
-import { Card, CardHeader, CardTitle, CardText, CardActions } from 'material-ui/Card';
+import { Card, CardHeader, CardText } from 'material-ui/Card';
 import Chip from 'material-ui/Chip';
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
@@ -83,3 +82,12 @@ export const GroupEdit = (props) => {
             </Card>
     );
 }
+
+GroupEdit.propTypes = {
+    lightData: PropTypes.array.isRequired,
+    groupData: PropTypes.array.isRequired,
+    updateGroupNameHandler: PropTypes.func.isRequired,
+    saveGroupNameHandler: PropTypes.func.isRequired,
+    addLightToGroup: PropTypes.func.isRequired,
+    removeLightFromGroup: PropTypes.func.isRequired
+};
