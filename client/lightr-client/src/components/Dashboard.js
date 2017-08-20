@@ -25,7 +25,7 @@ const FourOhFour = () => {
 class Dashboard extends Component {
     constructor() {
 		super();
-		this.lightsUrl = `http://192.168.1.12/api/${config.HUE_API_KEY}`; //`http://localhost:8001/api/lights`;
+		this.lightsUrl = `//192.168.1.12/api/${config.HUE_API_KEY}`; //`http://localhost:8001/api/lights`;
 		this.snackbarSuccessStyles = { backgroundColor: '#27ae60', color: '#fff' };
 		this.snackbarFailStyles = { backgroundColor: '#e74c3c', color: '#fff' };
 		this.state = {
@@ -65,6 +65,7 @@ class Dashboard extends Component {
 		}).then(jsonData => {
 			this.setState({ lightData: Object.assign(this.state.lightData, jsonData) });
 		}).catch(err => {
+			console.log(err);
 			this.setState({ 
 				lightFetchStatus: Object.assign(this.state.lightFetchStatus, { 
 						loading: false, 

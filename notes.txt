@@ -20,6 +20,9 @@ LIGHTR PROJECT:
         -find host and link up (probably firebase hosting to enable google login eventually)
             -be sure to npm run build for prod build and push that to firebase hosting
             -find domain name!
+            -TODO: major issue, can't access local network (http) from outside (https).  Possible solution: run entire damn thing off simple express server on 192 address and connect there from ip4.  test that- if it works, use it until I can figure out the remote - local communication
+                -option 1: host on DO, config my own Node server.  Serve over http, should be no problem
+                -option 2: keep on Google, create firebase db schema that matches Hue lights api.  Sync react state to that db.  have dashboard.js functions communicate with Hue api on state change?  Or have google cloud function listen to db updates and fire local function (might not be possible)
             -won't need auth for now: lights only work if you're on the same network
         -implement fetch and promises polyfill (ip4 only has ios/safari V7- no native fetch or promises)
             https://github.com/github/fetch
