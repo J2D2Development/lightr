@@ -16,6 +16,9 @@ import { LightSwitchIndividualView } from './LightSwitchIndividualView';
 import { GroupSwitchIndividualView } from './GroupSwitchIndividualView';
 import { GroupEdit } from './GroupEdit.js';
 
+//todo list imports
+import { ListsMain } from './lists/ListsMain.js';
+
 const FourOhFour = () => {
 	return(
 		<h1>Not Found!</h1>
@@ -538,6 +541,9 @@ class Dashboard extends Component {
 								addLightToGroup={this.addLightToGroup}
 								removeLightFromGroup={this.removeLightFromGroup} />
 							}
+						/>
+						<Route exact path="/dashboard/lists"
+							render={() => <ListsMain />}
 						/>
 						<Route component={FourOhFour} />
 					</Switch>
